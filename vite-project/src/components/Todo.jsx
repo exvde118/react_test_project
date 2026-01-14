@@ -1,98 +1,32 @@
-import { useState, useEffect } from 'react'
-import AddTaskForm from './AddTaskForm'
-import SearchTaskForm from "./SearchTaskForm"
-import TodoInfo from "./Todoinfo"
-import TodoList from "./TodoList"
+import { useContext } from "react";
+import { TasksContext } from "../context/TasksContext";
+import AddTaskForm from "./AddTaskForm";
+import Button from "./Button";
+import SearchTaskForm from "./SearchTaskForm";
+import TodoInfo from "./Todoinfo";
+import TodoList from "./TodoList";
 
 const Todo = () => {
-  
-    const [tasks, setTasks] = useState([
-      {id: 'task-1', title: 'Купить молоко', isDone: false},
-      {id: 'task-2', title: 'Погладить кота', isDone: true},
-    ])
+  const { firstIncompleteTaskRef } = useContext(TasksContext);
 
-    const [newTaskTitle, setNewTaskTitle] = useState('')
-    const [searchQuery, setSearchQuery] = useState('')
-
-
-    const deleteAllTasks = () => {
-      const isConfirmed = confirm('Точно хочешь все удалить?')
-
-      if (isConfirmed) {
-        setTasks([])
-      }
-    }
-
-    const deleteTask = (taskId) => {
-      setTasks(
-        tasks.filter((task) => task.id !== taskId)
-      )
-    }
-
-    const toggleTaskComplete = (taskId, isDone) => {
-      setTasks(
-        tasks.map((task) => {
-          if (task.id === taskId) {
-            return {...task, isDone}
-          }
-
-          return task
-        })
-      )
-    }
-
-    const addTask = () => {
-      if (newTaskTitle.trim().length > 0) {
-        const newTask = {
-          id: crypto?.randomUUID() ?? Date.now().toString(),
-          title: newTaskTitle,
-          isDone: false,
-        }
-
-        setTasks([...tasks, newTask])
-        setNewTaskTitle('')
-        setSearchQuery('')
-      }
-    }
-
-    useEffect(() => {
-      localStorage.setItem('tasks', JSON.stringify(tasks))
-    }, [tasks])
-
-    const clearSearchQuery = searchQuery.trim().toLowerCase()
-    const filteredTasks = clearSearchQuery.length > 0
-    ? tasks.filter(({title}) => title.toLowerCase().includes(clearSearchQuery))
-    : null
-
-    return (
-  
+  return (
     <div className="todo">
       <h1 className="todo__title">To Do List</h1>
-      <AddTaskForm 
-        addTask={addTask} 
-        newTaskTitle={newTaskTitle}  
-        setNewTaskTitle={setNewTaskTitle}  
-      />
-      <SearchTaskForm 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
-      <TodoInfo 
-      total={tasks.length}
-      done={tasks.filter(({ isDone }) => isDone).length}
-      onDeleteAllButtonClick={deleteAllTasks}
-      />
-      <TodoList
-        tasks={tasks}
-        filteredTasks={filteredTasks} 
-        onDeleteTaskButtonClick={deleteTask}
-        onTaskCompleteChange={toggleTaskComplete}
-       />
+      <AddTaskForm />
+      <SearchTaskForm />
+      <TodoInfo />
+      <Button
+        onClick={() =>
+          firstIncompleteTaskRef.current?.scrollIntoView({
+            behavior: "smooth",
+          })
+        }
+      >
+        Show first incomplete task
+      </Button>
+      <TodoList />
     </div>
-        
-    )
-}
+  );
+};
 
-
-
-export default Todo
+export default Todo;

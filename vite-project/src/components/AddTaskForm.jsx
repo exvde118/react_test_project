@@ -1,30 +1,30 @@
-import Field from './Field'
-import Button from './Button'
+import { useContext } from "react";
+import { TasksContext } from "../context/TasksContext";
+import Button from "./Button";
+import Field from "./Field";
 
-const AddTaskForm = (props) => {
-    const {
-        addTask,
-        newTaskTile,
-        setNewTaskTitle,
-    } = props
+const AddTaskForm = () => {
+  const { addTask, newTaskTile, setNewTaskTitle, newTaskInputRef } =
+    useContext(TasksContext);
 
-    const onSubmit = (event) => {
-        event.preventDefault()
-        addTask()
-    }
+  const onSubmit = (event) => {
+    event.preventDefault();
+    addTask();
+  };
 
-    return (
-        <form className="todo__form" onSubmit={onSubmit}>
-            <Field 
-                className="todo__field"
-                label="New task title"
-                id="new-task"
-                value={newTaskTile}
-                onInput={(event) => setNewTaskTitle(event.target.value)}
-            />
-            <Button type="submit">Add</Button>
-        </form>
-    )
-}
+  return (
+    <form className="todo__form" onSubmit={onSubmit}>
+      <Field
+        className="todo__field"
+        label="New task title"
+        id="new-task"
+        value={newTaskTile}
+        onInput={(event) => setNewTaskTitle(event.target.value)}
+        ref={newTaskInputRef}
+      />
+      <Button type="submit">Add</Button>
+    </form>
+  );
+};
 
-export default AddTaskForm
+export default AddTaskForm;
